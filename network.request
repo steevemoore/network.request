@@ -1,0 +1,76 @@
+
+
+----this code help you show on screen the network request detail
+
+
+
+----create the displaying text first
+    Status = display.newText( sceneGroup ,"download", 0, 0, font, 17)
+    Status.x = 550
+    Status.y = 420
+    Status:setFillColor( 0, 0, 0 )
+
+local function download2()
+
+local function networkListener( event )
+    if ( event.isError ) then
+        
+        print( "Network error: ", event.response ) 
+        
+        ----update the  displaying text
+      ---Status.text = event.response
+        Status.text = ( "Network error: ".. event.response )
+
+
+    elseif ( event.phase == "began" ) then
+        if ( event.bytesEstimated <= 0 ) then
+           
+            print( "Download starting, size unknown" )
+         Status.text = ( "Download starting, size unknown" )
+
+        else
+            print( "Download starting, estimated size: " .. event.bytesEstimated )
+           Status.text =( "Download starting, estimated size: " .. event.bytesEstimated )
+
+        end
+
+    elseif ( event.phase == "progress" ) then
+        if ( event.bytesEstimated <= 0 ) then
+            
+            print( "Download progress: " .. event.bytesTransferred )
+            Status.text =( "Download progress: " .. event.bytesTransferred )
+
+
+
+        else
+            print( "Download progress: " .. event.bytesTransferred .. " of estimated: " .. event.bytesEstimated )
+        Status.text =( "Download progress: " .. event.bytesTransferred .. " of estimated: " .. event.bytesEstimated )
+        
+
+        end
+        
+    elseif ( event.phase == "ended" ) then
+        print( "Download complete, total bytes transferred: " .. event.bytesTransferred )
+    Status.text =( "Download complete, total bytes transferred: " .. event.bytesTransferred )
+    
+
+    end
+end
+ 
+local params = {}
+
+-- Tell network.request() that we want the "began" and "progress" events:
+params.progress = "download"
+
+-- Tell network.request() that we want the output to go to a file:
+params.response = {
+
+      filename = "video2.mp4",
+
+    baseDirectory = system.DocumentsDirectory
+}
+network.request( "https://msod.tv5monde.com/tv5monde/vod/assets/106999893_6D4BA7b/materials/XfR6wTJVgJ_6D4BA7b/vod-idx.ism/vod-idx-video=300000-2.ts", "GET", networkListener,  params )
+
+end
+
+
